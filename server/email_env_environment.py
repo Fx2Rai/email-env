@@ -69,11 +69,7 @@ class EmailEnv:
         # MEDIUM → classification + priority
         elif self.state.current_email.task_type == "medium":
             correct_class = (action.classification or "").strip().lower() == self.state.correct_classification.strip().lower()
-            correct_priority = (
-                (action.priority or "").strip().lower()
-                ==
-                (self.state.correct_priority or "").strip().lower()
-            )
+            correct_priority = (action.priority or "").strip().lower() == self.state.correct_priority.strip().lower()
 
             if correct_class and correct_priority:
                 reward = 1.0
@@ -92,11 +88,8 @@ class EmailEnv:
                 else:
                     reward = 0.0
             else:
-                # spam or no reply needed → reward full if no reply
-                if not action.reply:
-                    reward = 1.0
-                else:
-                    reward = 0.5
+                # no expected reply → safe fallback
+                reward = 0.0
 
         info = {
             "correct_classification": self.state.correct_classification,

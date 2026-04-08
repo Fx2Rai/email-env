@@ -1,9 +1,10 @@
 ---
 title: Email Env AI
-emoji: 📧
+emoji: 🚀
 colorFrom: green
 colorTo: green
 sdk: docker
+app_port: 8000
 pinned: false
 ---
 
@@ -13,6 +14,7 @@ pinned: false
 
 This project implements a **real-world email assistant environment** using the OpenEnv framework.
 It simulates how an AI agent processes emails and takes actions such as classification, prioritization, and generating replies.
+This is an API-based environment for agent interaction.
 
 The environment follows the standard:
 
@@ -28,7 +30,6 @@ The environment follows the standard:
 * ✔ 3 difficulty levels: Easy, Medium, Hard
 * ✔ Reward-based evaluation (0.0 → 1.0)
 * ✔ FastAPI backend
-* ✔ Gradio UI interface
 * ✔ Deployed on Hugging Face Spaces
 
 ---
@@ -124,7 +125,7 @@ Average reward achieved: **~0.9**
 ## 🌐 Live Demo
 
 👉 Hugging Face Space:
-[Add your link here]
+(https://fabian9656-email-env.hf.space)
 
 ---
 
@@ -132,7 +133,6 @@ Average reward achieved: **~0.9**
 
 * Python
 * FastAPI
-* Gradio
 * Pydantic
 
 ---
@@ -159,6 +159,13 @@ email-env/
 * Add ML-based classification model
 * Improve reply generation using NLP
 * Add logging and analytics
+
+---
+
+## 🔌 API Endpoints
+
+- POST /reset → Get new email task
+- POST /step → Submit action and receive reward
 
 ---
 
