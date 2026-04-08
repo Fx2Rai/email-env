@@ -1,25 +1,19 @@
 from fastapi import FastAPI
 from server.email_env_environment import EmailEnv
-from server.models import EmailAction
 
 app = FastAPI()
-
 env = EmailEnv()
 
-@app.get("/")
-def root():
-    return {"message": "Email Env Running 🚀"}
-
-@app.get("/reset")
+@app.post("/reset")
 def reset():
     obs = env.reset()
     return obs.dict()
 
-@app.post("/step")
-def step(action: dict):
-    action_obj = EmailAction(**action)
+from models import EmailAction
 
-    obs, reward, done, info = env.step(action_obj)
+@app.post("/step")
+def step(action: EmailAction):
+    obs, reward, done, info = env.step(action)
 
     return {
         "observation": obs.dict(),
