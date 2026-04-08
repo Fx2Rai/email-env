@@ -1,4 +1,6 @@
 from server.email_env_environment import EmailEnv
+from models import EmailAction
+
 
 def act(observation):
     try:
@@ -41,9 +43,15 @@ def run():
 
     for step in range(episodes):
         obs = env.reset()
-        obs_dict = obs.dict()
 
-        action = act(obs_dict)
+        # SAFE for both Pydantic v1 & v2
+        if hasattr(obs, "model_dump"):
+            obs_dict = obs.model_dump()
+        else:
+            obs_dict = obs.dict()
+
+        action_dict = act(obs_dict)
+        action = EmailAction(**action_dict)
 
         obs, reward, done, info = env.step(action)
         total_reward += reward
