@@ -8,29 +8,31 @@ app_port: 8000
 pinned: false
 ---
 
-# 📧 Email Environment AI (OpenEnv Project)
+# 📧 Email Env AI (OpenEnv Project)
 
-## 🚀 Overview
-
-This project implements a **real-world email assistant environment** using the OpenEnv framework.
-It simulates how an AI agent processes emails and takes actions such as classification, prioritization, and generating replies.
-This is an API-based environment for agent interaction.
-
-The environment follows the standard:
-
-* `reset()`
-* `step()`
-* reward-based evaluation
+🚀 A reinforcement-learning style email assistant environment built using OpenEnv + LLM integration.
 
 ---
 
-## 🎯 Features
+## 🌟 Overview
 
-* ✔ Real-world task: Email handling assistant
-* ✔ 3 difficulty levels: Easy, Medium, Hard
-* ✔ Reward-based evaluation (0.0 → 1.0)
-* ✔ FastAPI backend
-* ✔ Deployed on Hugging Face Spaces
+This project simulates a **real-world email assistant agent** that:
+
+* Classifies emails (spam / important / normal)
+* Assigns priority (low / high)
+* Generates replies for messages
+
+It is designed for **agent-based evaluation using OpenEnv**, where actions are scored using a reward system.
+
+---
+
+## ⚡ Key Features
+
+* ✅ 3 difficulty levels (easy, medium, hard)
+* ✅ Reward-based evaluation (0.0 → 1.0)
+* ✅ FastAPI environment server
+* ✅ LLM-powered agent (via OpenAI-compatible API)
+* ✅ Hugging Face Spaces deployment
 
 ---
 
@@ -39,41 +41,36 @@ The environment follows the standard:
 ### 🔹 Easy
 
 * Input: Email
-* Task: Classify email
-* Output: `spam / important / normal`
-
----
+* Output: Classification (`spam / important / normal`)
 
 ### 🔹 Medium
 
 * Input: Email
-* Task:
+* Output:
 
-  * Classify email
-  * Assign priority (`low / high`)
-
----
+  * Classification
+  * Priority (`low / high`)
 
 ### 🔹 Hard
 
 * Input: Email
-* Task: Generate appropriate reply
+* Output: Reply generation
 
 ---
 
-## 🏆 Reward Function
+## 🏆 Reward System
 
-| Task      | Condition              | Reward      |
-| --------- | ---------------------- | ----------- |
-| Easy      | Correct classification | 1.0         |
-| Medium    | Both correct           | 1.0         |
-| Medium    | One correct            | 0.5         |
-| Hard      | Correct reply          | 1.0         |
-| Otherwise | Incorrect              | 0.0 or -1.0 |
+| Task   | Condition              | Reward |
+| ------ | ---------------------- | ------ |
+| Easy   | Correct classification | 1.0    |
+| Medium | Both correct           | 1.0    |
+| Medium | One correct            | 0.5    |
+| Hard   | Correct reply          | 1.0    |
+| Other  | Incorrect / missing    | 0.0/-1 |
 
 ---
 
-## ⚙️ Action Space
+## ⚙️ Action Format
 
 ```json
 {
@@ -85,7 +82,7 @@ The environment follows the standard:
 
 ---
 
-## 👀 Observation Space
+## 👀 Observation Format
 
 ```json
 {
@@ -99,7 +96,7 @@ The environment follows the standard:
 
 ## 🔄 Environment Flow
 
-1. `reset()` → generates new email task
+1. `reset()` → generates a new email
 2. `step(action)` → evaluates agent action
 3. returns:
 
@@ -110,30 +107,51 @@ The environment follows the standard:
 
 ---
 
-## 🤖 Baseline Agent
+## 🤖 Agent (inference.py)
 
-A rule-based agent is implemented in `inference.py` that:
+This project uses an **LLM-based agent**:
 
-* Detects spam using keywords
-* Identifies important emails (meetings)
-* Generates simple replies
+* Uses OpenAI-compatible API
+* Generates structured JSON output
+* Handles:
 
-Average reward achieved: **~0.9**
-
----
-
-## 🌐 Live Demo
-
-👉 Hugging Face Space:
-(https://fabian9656-email-env.hf.space)
+  * classification
+  * priority
+  * reply generation
 
 ---
 
-## 🛠️ Tech Stack
+## 🔑 Environment Variables (IMPORTANT)
 
-* Python
-* FastAPI
-* Pydantic
+This project depends on runtime-injected variables:
+
+```bash
+API_BASE_URL=<provided_by_evaluator>
+API_KEY=<provided_by_evaluator>
+```
+
+⚠️ Do NOT hardcode keys.
+
+---
+
+## ▶️ Quick Start (Local)
+
+```bash
+pip install -r requirements.txt
+
+# run environment
+uvicorn server.app:app --host 0.0.0.0 --port 8000
+
+# run agent
+python inference.py
+```
+
+---
+
+## 📡 API Endpoints
+
+* `POST /reset` → get new email
+* `POST /step` → submit action
 
 ---
 
@@ -141,36 +159,36 @@ Average reward achieved: **~0.9**
 
 ```
 email-env/
-├── app.py
-├── models.py
-├── inference.py
-├── requirements.txt
-├── openenv.yaml
+├── inference.py        # agent logic
+├── models.py          # Pydantic models
 ├── server/
+│   ├── app.py         # FastAPI server
 │   ├── email_env_environment.py
-│   ├── app.py
 │   └── __init__.py
+├── openenv.yaml
+├── requirements.txt
 ```
+
+---
+
+## 🌐 Deployment
+
+👉 Hugging Face Space:
+https://fabian9656-email-env.hf.space
 
 ---
 
 ## 💡 Future Improvements
 
-* Add ML-based classification model
-* Improve reply generation using NLP
-* Add logging and analytics
-
----
-
-## 🔌 API Endpoints
-
-- POST /reset → Get new email task
-- POST /step → Submit action and receive reward
+* Improve LLM prompting strategy
+* Add fine-tuned model
+* Expand dataset
+* Add logging & metrics
 
 ---
 
 ## 🏁 Conclusion
 
-This project demonstrates how AI agents can interact with structured environments using reward-based learning, simulating real-world applications like email automation.
+This project demonstrates how LLM-powered agents can interact with structured environments using reward-based evaluation — a key step toward real-world autonomous systems.
 
 ---
