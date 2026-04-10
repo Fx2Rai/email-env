@@ -5,6 +5,16 @@ environment:
   module: server.email_env_environment
   class: EmailEnv
 
+tasks:
+  - name: classify_email
+    description: Classify email as spam, important, or normal
+
+  - name: prioritize_email
+    description: Assign priority to email
+
+  - name: reply_email
+    description: Generate reply for email
+
 models:
   observation: models.EmailObservation
   action: models.EmailAction

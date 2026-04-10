@@ -9,7 +9,6 @@ class EmailEnv:
     def __init__(self):
         self.state = None
 
-        # Sample dataset
         self.samples = [
             {
                 "email": "Win a free iPhone now!",
@@ -35,8 +34,7 @@ class EmailEnv:
     def reset(self) -> EmailObservation:
         sample = random.choice(self.samples)
 
-        # Decide task type
-        task_type = random.choice(["easy", "medium", "hard"])
+        task_type = random.choice(["classify", "priority", "reply"])
 
         observation = EmailObservation(
             email_text=sample["email"],
@@ -59,17 +57,17 @@ class EmailEnv:
         reward = 0.0
         done = True
 
-        # EASY → classification
-        if self.state.current_email.task_type == "easy":
+        task = self.state.current_email.task_type
+
+        if task == "classify":
             if (action.classification or "").strip().lower() == self.state.correct_classification.strip().lower():
                 reward = 1.0
             else:
                 reward = -1.0
 
-        # MEDIUM → classification + priority
-        elif self.state.current_email.task_type == "medium":
+        elif task == "priority":
             correct_class = (action.classification or "").strip().lower() == self.state.correct_classification.strip().lower()
-            correct_priority = (action.priority or "").strip().lower() == self.state.correct_priority.strip().lower()
+            correct_priority = (action.priority or "").strip().lower() == (self.state.correct_priority or "").strip().lower()
 
             if correct_class and correct_priority:
                 reward = 1.0
@@ -78,8 +76,7 @@ class EmailEnv:
             else:
                 reward = -1.0
 
-        # HARD → reply
-        elif self.state.current_email.task_type == "hard":
+        elif task == "reply":
             if self.state.expected_reply:
                 if action.reply and self.state.expected_reply.lower() in action.reply.lower():
                     reward = 1.0
@@ -88,10 +85,10 @@ class EmailEnv:
                 else:
                     reward = 0.0
             else:
-                # no expected reply → safe fallback
                 reward = 0.0
 
         info = {
+            "task": task,
             "correct_classification": self.state.correct_classification,
             "correct_priority": self.state.correct_priority,
             "expected_reply": self.state.expected_reply
