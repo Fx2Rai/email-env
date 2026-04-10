@@ -6,7 +6,7 @@ from typing import Optional
 class EmailObservation(BaseModel):
     email_text: str
     sender: str
-    task_type: str   # easy / medium / hard
+    task_type: str   # classify / priority / reply 
 
 
 # 🎮 What AI does

@@ -31,10 +31,18 @@ class EmailEnv:
             }
         ]
 
-    def reset(self) -> EmailObservation:
-        sample = random.choice(self.samples)
+        self.tasks = ["classify", "priority", "reply"]
 
-        task_type = random.choice(["classify", "priority", "reply"])
+    def reset(self) -> EmailObservation:
+        
+        if self.state is None:
+            step_count = 0
+        else:
+            step_count = self.state.step_count
+
+        task_type = self.tasks[step_count % len(self.tasks)]
+
+        sample = random.choice(self.samples)
 
         observation = EmailObservation(
             email_text=sample["email"],
@@ -47,23 +55,25 @@ class EmailEnv:
             correct_classification=sample["classification"],
             correct_priority=sample.get("priority"),
             expected_reply=sample.get("reply"),
-            step_count=0
+            step_count=step_count
         )
 
         return observation
 
-    def step(self, action: EmailAction):
+    def step(self, action: EmailAction) -> Tuple[EmailObservation, float, bool, dict]:
 
-        reward = 0.1   # default safe value
+        reward = 0.1  
         done = True
 
         task = self.state.current_email.task_type
+
 
         if task == "classify":
             if (action.classification or "").strip().lower() == self.state.correct_classification.strip().lower():
                 reward = 0.9
             else:
                 reward = 0.1
+
 
         elif task == "priority":
             correct_class = (action.classification or "").strip().lower() == self.state.correct_classification.strip().lower()
@@ -76,6 +86,7 @@ class EmailEnv:
             else:
                 reward = 0.1
 
+ 
         elif task == "reply":
             if self.state.expected_reply:
                 if action.reply and self.state.expected_reply.lower() in action.reply.lower():
@@ -85,7 +96,10 @@ class EmailEnv:
                 else:
                     reward = 0.2
             else:
-                    reward = 0.2
+                reward = 0.2
+
+
+        self.state.step_count += 1
 
         info = {
             "task": task,

@@ -15,13 +15,9 @@ def act(observation):
 
         prompt = f"""
 You are an email assistant.
-
 Classify the email and generate a reply.
-
 Email: {text}
-
 Return ONLY valid JSON. No explanation.
-
 Format:
 {{
   "classification": "spam | important | normal",

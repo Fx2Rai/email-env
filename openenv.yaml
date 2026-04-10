@@ -7,17 +7,17 @@ environment:
 
 tasks:
   - name: classify
-    description: Classify email
+    description: Classify email as spam, important, or normal
     grader:
       type: reward
 
   - name: priority
-    description: Assign priority
+    description: Assign priority to email
     grader:
       type: reward
 
   - name: reply
-    description: Generate reply
+    description: Generate appropriate reply
     grader:
       type: reward
 
