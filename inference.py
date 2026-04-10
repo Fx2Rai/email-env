@@ -1,30 +1,55 @@
+import os
+import json
+from openai import OpenAI
 from server.email_env_environment import EmailEnv
 from models import EmailAction
 
+client = OpenAI(
+    base_url=os.environ["API_BASE_URL"],
+    api_key=os.environ["API_KEY"]
+)
 
 def act(observation):
     try:
-        text = observation["email_text"].lower()
+        text = observation["email_text"]
 
-        if "win" in text or "free" in text or "offer" in text:
+        prompt = f"""
+You are an email assistant.
+
+Classify the email and generate a reply.
+
+Email: {text}
+
+Return ONLY valid JSON. No explanation.
+
+Format:
+{{
+  "classification": "spam | important | normal",
+  "priority": "low | high",
+  "reply": "your reply"
+}}
+"""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0
+        )
+
+        output = response.choices[0].message.content
+
+        # Extract JSON safely
+        try:
+            start = output.find("{")
+            end = output.rfind("}") + 1
+            json_str = output[start:end]
+            return json.loads(json_str)
+        except:
             return {
-                "classification": "spam",
+                "classification": "normal",
                 "priority": "low",
-                "reply": ""
+                "reply": "Sorry, something went wrong."
             }
-
-        if "meeting" in text or "urgent" in text:
-            return {
-                "classification": "important",
-                "priority": "high",
-                "reply": "Sure, I will attend."
-            }
-
-        return {
-            "classification": "normal",
-            "priority": "low",
-            "reply": "Sounds good, let's plan soon!"
-        }
 
     except Exception:
         return {
@@ -44,7 +69,6 @@ def run():
     for step in range(episodes):
         obs = env.reset()
 
-        # SAFE for both Pydantic v1 & v2
         if hasattr(obs, "model_dump"):
             obs_dict = obs.model_dump()
         else:
