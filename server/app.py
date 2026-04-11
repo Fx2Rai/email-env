@@ -8,29 +8,17 @@ env = EmailEnv()
 @app.post("/reset")
 def reset():
     obs = env.reset()
-    if hasattr(obs, "model_dump"):
-        return obs.model_dump()
     return obs.dict()
 
 @app.post("/step")
 def step(action: EmailAction):
     obs, reward, done, info = env.step(action)
     return {
-        "observation": obs.model_dump() if hasattr(obs, "model_dump") else obs.dict(),
+        "observation": obs.dict(),
         "reward": reward,
         "done": done,
         "info": info
     }
-
-@app.get("/state")
-@app.post("/state")
-def state():
-    s = env.get_state()
-    if s is None:
-        return {}
-    if hasattr(s, "model_dump"):
-        return s.model_dump()
-    return s.dict()
 
 def main():
     import uvicorn
