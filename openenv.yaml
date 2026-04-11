@@ -6,20 +6,23 @@ environment:
   class: EmailEnv
 
 tasks:
-  - name: classify
+  - id: classify
+    name: classify
     description: Classify email as spam, important, or normal
-    grader:
-      type: reward
+    difficulty: easy
+    grader: tasks.classify.grader:grade
 
-  - name: priority
-    description: Assign priority to email
-    grader:
-      type: reward
+  - id: priority
+    name: priority
+    description: Classify email and assign priority level (high/low)
+    difficulty: medium
+    grader: tasks.priority.grader:grade
 
-  - name: reply
-    description: Generate appropriate reply
-    grader:
-      type: reward
+  - id: reply
+    name: reply
+    description: Generate an appropriate reply to the email
+    difficulty: hard
+    grader: tasks.reply.grader:grade
 
 models:
   observation: models.EmailObservation
