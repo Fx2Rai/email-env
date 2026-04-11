@@ -1,1 +1,1 @@
-# Priority task package
+from .grader import grade
