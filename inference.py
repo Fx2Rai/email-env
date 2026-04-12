@@ -64,10 +64,11 @@ def run():
     total_reward = 0
     episodes = 3
 
-    print("[START] task=email_env", flush=True)
-
     for step in range(episodes):
         obs = env.reset()
+
+        task_id = obs.task_type
+        print(f"[START] task={task_id}", flush=True)
 
         if hasattr(obs, "model_dump"):
             obs_dict = obs.model_dump()
@@ -80,11 +81,11 @@ def run():
         obs, reward, done, info = env.step(action)
         total_reward += reward
 
-        print(f"[STEP] step={step+1} reward={reward}", flush=True)
+        print(f"[STEP] step=1 reward={reward}", flush=True)
+        print(f"[END] task={task_id} score={reward} steps=1", flush=True)
 
     avg_score = total_reward / episodes
-
-    print(f"[END] task=email_env score={avg_score} steps={episodes}", flush=True)
+    print(f"Average score: {avg_score}", flush=True)
 
 
 if __name__ == "__main__":
